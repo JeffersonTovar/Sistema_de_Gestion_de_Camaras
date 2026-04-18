@@ -18,3 +18,6 @@ class TicketCreate(BaseModel):
     if v not in ALLOWED_PRIORITY:
       raise ValueError("Prioridad inválida")
     return v
+
+class TicketStatusUpdate(BaseModel):
+  new_status: str

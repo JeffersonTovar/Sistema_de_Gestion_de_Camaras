@@ -14,5 +14,5 @@ class Ticket(Base):
   priority = Column(String(50))
   opened_at = Column(DateTime, default=datetime.utcnow)
   closed_at = Column(DateTime, nullable=True)
-
+  deleted_at = Column(DateTime, nullable=True)
   camera = relationship("Camera")

@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from datetime import datetime
 from app.models.camera import Camera
+from fastapi import HTTPException
+
 
 def base_query(db):
   return db.query(Camera).filter(Camera.deleted_at == None)
@@ -27,7 +29,13 @@ def get_cameras(db, page=1, limit=10, search=None, status=None, locality=None):
     "limit": limit
   }
 
-def create_camera(db: Session, data):
+def create_camera(db, data):
+  existing = db.query(Camera).filter(Camera.id == data.id).first()
+  if existing:
+    raise HTTPException(
+      status_code=400,
+      detail=f"Camara con id {data.id} ya existe."
+    )
   camera = Camera(**data.dict())
   db.add(camera)
   db.commit()
