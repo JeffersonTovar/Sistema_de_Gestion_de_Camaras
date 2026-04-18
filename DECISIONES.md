@@ -194,7 +194,19 @@ Se utilizó Leaflet por ser:
 
 ---
 
-## 7. Conclusión
+## 7. Tiempo invertido
+
+| Módulo | Tiempo |
+|--------|--------|
+| Planeación | 30 min |
+| Backend | 3.5 h |
+| Frontend | 3 h |
+| Docker | 1 h |
+| Documentación | 30 min |
+
+---
+
+## 8. Conclusión
 
 Se desarrolló una solución funcional, escalable y alineada con buenas prácticas, priorizando:
 
