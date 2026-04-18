@@ -5,7 +5,7 @@ def main():
   db = SessionLocal()
   try:
     run_seed(db)
-    print("✅ Seed ejecutado correctamente")
+    print("Seed ejecutado correctamente")
   finally:
     db.close()
 
