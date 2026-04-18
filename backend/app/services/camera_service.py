@@ -34,6 +34,20 @@ def create_camera(db: Session, data):
   db.refresh(camera)
   return camera
 
+def update_camera(db, camera_id, data):
+  camera = db.query(Camera).filter(
+    Camera.id == camera_id,
+    Camera.deleted_at == None
+  ).first()
+  if not camera:
+    raise Exception("Camera not found")
+  update_data = data.dict(exclude_unset=True)
+  update_data.pop("id", None)
+  for key, value in update_data.items():
+    setattr(camera, key, value)
+  db.commit()
+  db.refresh(camera)
+  return camera
 
 def soft_delete_camera(db, camera_id: str):
   camera = db.query(Camera).filter(Camera.id == camera_id).first()

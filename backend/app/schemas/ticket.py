@@ -1,14 +1,20 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, Field, validator
+ALLOWED_TYPES = ["Correctivo", "Preventivo"]
+ALLOWED_PRIORITY = ["Crítica", "Alta", "Media", "Baja"]
 class TicketCreate(BaseModel):
   camera_id: str
   type: str
-  description: str
+  description: str = Field(min_length=5)
   priority: str
 
-class TicketResponse(BaseModel):
-  id: str
-  status: str
+  @validator("type")
+  def validate_type(cls, v):
+    if v not in ALLOWED_TYPES:
+      raise ValueError("Tipo inválido")
+    return v
 
-  class Config:
-    from_attributes = True
+  @validator("priority")
+  def validate_priority(cls, v):
+    if v not in ALLOWED_PRIORITY:
+      raise ValueError("Prioridad inválida")
+    return v

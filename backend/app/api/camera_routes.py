@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.db.deps import get_db
-from app.services.camera_service import get_cameras, create_camera, soft_delete_camera, restore_camera
+from app.services.camera_service import get_cameras, create_camera, soft_delete_camera, restore_camera, update_camera
 from app.schemas.camera import CameraCreate
 
 router = APIRouter(prefix="/cameras")
@@ -20,6 +20,10 @@ def list_cameras(
 @router.post("/")
 def add_camera(data: CameraCreate, db: Session = Depends(get_db)):
   return create_camera(db, data)
+
+@router.put("/{camera_id}")
+def update(camera_id: str, data: CameraCreate, db: Session = Depends(get_db)):
+  return update_camera(db, camera_id, data)
 
 @router.delete("/{camera_id}")
 def delete_camera(camera_id: str, db: Session = Depends(get_db)):

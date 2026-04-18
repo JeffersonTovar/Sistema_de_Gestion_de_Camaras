@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.ticket import Ticket
+from app.models.camera import Camera
 from datetime import datetime
 
 VALID_TRANSITIONS = {
@@ -18,7 +19,7 @@ def get_tickets(
   start_date = None,
   end_date = None
 ):
-  query = db.query(Ticket)
+  query = db.query(Ticket).filter(Ticket.deleted_at == None)
   if status:
     query = query.filter(Ticket.status == status)
   if type:
@@ -40,7 +41,10 @@ def get_tickets(
     "limit": limit
   }
 
-def create_ticket(db: Session, data):
+def create_ticket(db, data):
+  camera = validate_camera_exists(db, data.camera_id)
+  if camera.status == "Inactiva":
+    raise Exception("Cannot create ticket for inactive camera")
   ticket = Ticket(
     **data.dict(),
     status="Nuevo"
@@ -50,11 +54,39 @@ def create_ticket(db: Session, data):
   db.refresh(ticket)
   return ticket
 
-def change_status(db: Session, ticket: Ticket, new_status: str):
-  if new_status not in VALID_TRANSITIONS[ticket.status]:
-    raise Exception("Invalid transition")
+def update_ticket_status(db, ticket_id, new_status):
+  ticket = db.query(Ticket).filter(
+    Ticket.id == ticket_id,
+    Ticket.deleted_at == None
+  ).first()
+  if not ticket:
+    raise Exception("Ticket not found")
+  allowed = VALID_TRANSITIONS.get(ticket.status, [])
+  if new_status not in allowed:
+    raise Exception(
+      f"Invalid transition {ticket.status} → {new_status}"
+    )
   ticket.status = new_status
   if new_status == "Resuelto":
     ticket.closed_at = datetime.utcnow()
   db.commit()
+  db.refresh(ticket)
   return ticket
+
+def delete_ticket(db, ticket_id):
+  ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
+  if not ticket:
+    raise Exception("Ticket not found")
+  ticket.deleted_at = datetime.utcnow()
+  db.commit()
+  return {"message": "Ticket deleted"}
+
+
+def validate_camera_exists(db, camera_id):
+  camera = db.query(Camera).filter(
+    Camera.id == camera_id,
+    Camera.deleted_at == None
+  ).first()
+  if not camera:
+    raise Exception("Camera not found or deleted")
+  return camera
