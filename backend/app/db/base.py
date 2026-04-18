@@ -1,3 +1,4 @@
-from sqlalchemy.orm import declarative_base
+from app.db.base_class import Base
 
-Base = declarative_base()
+from app.models import camera
+from app.models import ticket

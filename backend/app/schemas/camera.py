@@ -14,4 +14,4 @@ class CameraCreate(CameraBase):
 class CameraResponse(CameraBase):
   id: str
   class Config:
-    orm_mode = True
+    from_attributes = True

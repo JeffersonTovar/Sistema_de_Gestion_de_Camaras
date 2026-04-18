@@ -1,13 +1,11 @@
-version: "3.9"
-
 services:
   db:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cameras_db
-    ports:
-      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   backend:
     build: ./backend
@@ -15,3 +13,11 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_HOST: db
+      DB_NAME: cameras_db
+
+volumes:
+  mysql_data: {}
