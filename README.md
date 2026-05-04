@@ -1,4 +1,4 @@
-# Sistema de Gestión de Cámaras - Grupo Verytel
+# Sistema de Gestión de Cámaras
 
 Aplicación full-stack para la gestión de cámaras de videovigilancia y tickets de mantenimiento en Bogotá.
 
